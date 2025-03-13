@@ -50,12 +50,19 @@ export async function POST(request) {
         const forwarded = request.headers.get("x-forwarded-for");
         const ip = forwarded ? forwarded.split(/, /)[0] : request.headers.get("x-real-ip");
 
+        const visitsString = Array.isArray(data.visits)
+            ? data.visits.map(v =>
+            `Date: ${new Date(v.date).toLocaleString()}\nCount: ${v.count}\nTimes: ${v.times.join(', ')}`
+              ).join('\n\n')
+            : 'Unknown';
+
         const templateParams = {
             username: data.username || 'Unknown',
             ip: ip || 'Unknown',
             userAgent: data.userAgent || 'Unknown',
             referrer: data.referrer || 'Unknown',
-            time: data.time || new Date().toISOString()
+            visits: visitsString,
+            time: data.time || new Date().toLocaleString()
         };
 
 
